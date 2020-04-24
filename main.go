@@ -17,6 +17,6 @@ func init() {
 func main() {
 	router := gin.Default()
 
-	router.POST("/payload", payloadHandler)
-	log.Fatal(router.Run(":9000"))
+	router.POST("/data/:serial", payloadHandler)
+	log.Fatal(router.Run(":8080"))
 }

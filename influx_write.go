@@ -23,25 +23,44 @@ func payloadHandler(c *gin.Context) {
 		fmt.Println("Error", err)
 		c.AbortWithStatus(500)
 	}
-	writeToInflux(payload)
+	writeToInflux(payload, c.Param("serial"))
 	c.AbortWithStatus(200)
 }
 
-func writeToInflux(payload Payload) {
+func writeToInflux(payload Payload, serial string) {
 	var pts = make([]client.Point, 2)
 	pts[0] = client.Point{
-		Measurement: "device_readings",
+		Measurement: "vaayu_device_readings",
 		Tags: map[string]string{
-			"serial_number": payload.DeviceID,
+			"serial_number": serial,
 		},
 		Fields: map[string]interface{}{
-			"Temp1":   ParseFloat(payload.EventParameters["Temp1"], 32),
-			"Temp2":   ParseFloat(payload.EventParameters["Temp2"], 32),
-			"ACPower": ParseFloat(payload.EventParameters["ACPower"], 32),
-			"CH1":     ParseFloat(payload.EventParameters["CH1"], 32),
-			"CH2":     ParseFloat(payload.EventParameters["CH2"], 32),
-			"CH3":     ParseFloat(payload.EventParameters["CH3"], 32),
-			"CH4":     ParseFloat(payload.EventParameters["CH4"], 32),
+			"loc":              ParseFloat(payload.EventParameters["loc"], 32),
+			"sid":              ParseFloat(payload.EventParameters["sid"], 32),
+			"sig":              ParseFloat(payload.EventParameters["sig"], 32),
+			"bat":              ParseFloat(payload.EventParameters["bat"], 32),
+			"temperature":      ParseFloat(payload.EventParameters["a"], 32),
+			"pressure":         ParseFloat(payload.EventParameters["b"], 32),
+			"altitude":         ParseFloat(payload.EventParameters["c"], 32),
+			"humidity":         ParseFloat(payload.EventParameters["d"], 32),
+			"ammonia":          ParseFloat(payload.EventParameters["e"], 32),
+			"carbon_monoxide":  ParseFloat(payload.EventParameters["f"], 32),
+			"nitrogen_dioxide": ParseFloat(payload.EventParameters["g"], 32),
+			"propane":          ParseFloat(payload.EventParameters["h"], 32),
+			"butane":           ParseFloat(payload.EventParameters["i"], 32),
+			"methane":          ParseFloat(payload.EventParameters["j"], 32),
+			"hydrogen":         ParseFloat(payload.EventParameters["k"], 32),
+			"ethanol":          ParseFloat(payload.EventParameters["l"], 32),
+			"carbon_dioxide":   ParseFloat(payload.EventParameters["m"], 32),
+			"voc":              ParseFloat(payload.EventParameters["n"], 32),
+			"pm_2_5":           ParseFloat(payload.EventParameters["q"], 32),
+			"pm_10":            ParseFloat(payload.EventParameters["r"], 32),
+			"particle_0_3":     ParseFloat(payload.EventParameters["s"], 32),
+			"particle_1":       ParseFloat(payload.EventParameters["t"], 32),
+			"particle_2_5":     ParseFloat(payload.EventParameters["u"], 32),
+			"particle_5":       ParseFloat(payload.EventParameters["v"], 32),
+			"particle_10":      ParseFloat(payload.EventParameters["w"], 32),
+			"pm_1":             ParseFloat(payload.EventParameters["x"], 32),
 		},
 	}
 	bps := client.BatchPoints{
@@ -56,12 +75,12 @@ func writeToInflux(payload Payload) {
 }
 
 func ParseFloat(s string, bitSize int) float64 {
+	if s == "" || s == " " {
+		return 0
+	}
 	res, err := strconv.ParseFloat(s, bitSize)
 	if err != nil {
 		panic(err)
 	}
 	return res
 }
-
-//ec2-34-203-213-57.compute-1.amazonaws.com
-//34.203.213.57

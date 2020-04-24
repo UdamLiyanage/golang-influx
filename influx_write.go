@@ -7,6 +7,7 @@ import (
 	_ "github.com/influxdata/influxdb1-client"
 	client "github.com/influxdata/influxdb1-client"
 	_ "github.com/joho/godotenv/autoload"
+	"log"
 	"os"
 	"strconv"
 )
@@ -18,6 +19,7 @@ type Payload struct {
 
 func payloadHandler(c *gin.Context) {
 	var payload Payload
+	log.Println("Serial: ", c.Param("serial"))
 	err := json.NewDecoder(c.Request.Body).Decode(&payload)
 	if err != nil {
 		fmt.Println("Error", err)

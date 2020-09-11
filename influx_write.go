@@ -42,6 +42,9 @@ func writeToInflux(payload Payload) {
 			"CH2":     ParseFloat(payload.EventParameters["CH2"], 32),
 			"CH3":     ParseFloat(payload.EventParameters["CH3"], 32),
 			"CH4":     ParseFloat(payload.EventParameters["CH4"], 32),
+			"RSSI":    ParseFloat(payload.EventParameters["RSSI"], 32),
+			"BAT":     ParseFloat(payload.EventParameters["BAT"], 32),
+			"STAT":    payload.EventParameters["STAT"],
 		},
 	}
 	bps := client.BatchPoints{
